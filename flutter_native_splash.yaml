@@ -1,0 +1,25 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  color: "#d4e4ed"
+  image: assets/splash_screen_4.png
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
+
+  android_12:
+    color: "#d4e4ed"
+    image: assets/splash_screen_4.png
+    android_gravity: fill
+
+# To reset configuration cleanly:
+# flutter clean
+# flutter pub get
+# flutter pub run flutter_native_splash:remove
+# flutter pub run flutter_native_splash:create
+
+# flutter clean
+# Remove-Item -Recurse -Force android/app/src/main/res/drawable-*/splash_screen_1.png
+# Remove-Item -Recurse -Force android/app/src/main/res/drawable-*/launch_background.xml
+# flutter pub run flutter_native_splash:create
