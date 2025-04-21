@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +46,7 @@ final List<Map<String, String>> quickUsers = [
   {'email': 'lucas_castelli@hotmail.com', 'password': 'Castelli.Lucas.66'},
 ];
 
-enum MessageType {success, error, failure}
+enum MessageType {success, warning, failure}
 
 void mostrarMensaje(BuildContext context, String mensaje, MessageType type) {
   Color backgroundColor;
@@ -54,12 +57,12 @@ void mostrarMensaje(BuildContext context, String mensaje, MessageType type) {
       backgroundColor = Colors.green[800]!;
       icon = Icons.check_circle;
       break;
-    case MessageType.error:
-      backgroundColor = Colors.red[800]!;
-      icon = Icons.error;
-      break;
     case MessageType.failure:
       backgroundColor = Colors.yellow[800]!;
+      icon = Icons.error;
+      break;
+    case MessageType.warning:
+      backgroundColor = Colors.red[800]!;
       icon = Icons.warning;
       break;
   }
@@ -108,9 +111,11 @@ class _LoginPageState extends State<LoginPage> {
         password: passwordController.text.trim(),
       );
       Navigator.pushNamed(context, '/session');
+      Session.activeUser = emailController.text.trim();
+      Session.startCountdown();
       mostrarMensaje(context, '¡Inicio de sesión exitoso!', MessageType.success);
     } on FirebaseAuthException catch (e) {
-      mostrarMensaje(context, e.message ?? 'Error al iniciar sesión', MessageType.error);
+      mostrarMensaje(context, e.message ?? 'Error al iniciar sesión', MessageType.failure);
     }
   }
 
@@ -303,6 +308,12 @@ class SessionPage extends StatefulWidget {
 
 class _SessionPageState extends State<SessionPage> {
 
+  void logOut() {
+    Session.activeUser = '';
+    Navigator.pushNamed(context, '/');
+    mostrarMensaje(context, 'Se ha cerrado la sesión', MessageType.warning);
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -319,7 +330,7 @@ class _SessionPageState extends State<SessionPage> {
             SizedBox(height: 40),
             Center(
               child: Text(
-                'Hola, ... Bienvenido a PruebaApp;',
+                'Hola, ${Session.activeUser}. Bienvenido a PruebaApp;',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -328,5 +339,24 @@ class _SessionPageState extends State<SessionPage> {
         ),
       ),
     );
+  }
+}
+
+class Session {
+  static var sessionPage = _SessionPageState();
+  static String? activeUser;
+  static int inactiveSessionTimer = 0;
+  static const int sessionTimeLimit = 300;
+
+  static void startCountdown() {
+    Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      inactiveSessionTimer++;
+      print('Timer: $timer');
+
+      if (inactiveSessionTimer >= sessionTimeLimit) {
+        timer.cancel();
+        sessionPage.logOut();
+      }
+    });
   }
 }
