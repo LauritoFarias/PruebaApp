@@ -57,13 +57,13 @@ void mostrarMensaje(BuildContext context, String mensaje, MessageType type) {
       backgroundColor = Colors.green[800]!;
       icon = Icons.check_circle;
       break;
-    case MessageType.failure:
-      backgroundColor = Colors.yellow[800]!;
-      icon = Icons.error;
-      break;
     case MessageType.warning:
-      backgroundColor = Colors.red[800]!;
+      backgroundColor = Colors.yellow[800]!;
       icon = Icons.warning;
+      break;
+    case MessageType.failure:
+      backgroundColor = Colors.red[800]!;
+      icon = Icons.error;
       break;
   }
 
@@ -317,26 +317,44 @@ class _SessionPageState extends State<SessionPage> {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 40),
-            Text(
-              'PruebaApp',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(height: 40),
+                Text(
+                  'PruebaApp',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 40),
+                Center(
+                  child: Text(
+                    'Hola, ${Session.activeUser}. Bienvenido a PruebaApp;',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                )
+              ],
             ),
-            SizedBox(height: 40),
-            Center(
-              child: Text(
-                'Hola, ${Session.activeUser}. Bienvenido a PruebaApp;',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
+          ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: ElevatedButton(
+              onPressed: () {
+                logOut();
+              },
+              child: Icon(
+                Icons.logout,
+                color: Colors.red,
+                size: 20,
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -351,7 +369,7 @@ class Session {
   static void startCountdown() {
     Timer.periodic(Duration(seconds: 1), (Timer timer) {
       inactiveSessionTimer++;
-      print('Timer: $timer');
+      print('Timer: $inactiveSessionTimer');
 
       if (inactiveSessionTimer >= sessionTimeLimit) {
         timer.cancel();
