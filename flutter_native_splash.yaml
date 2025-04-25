@@ -4,14 +4,14 @@ flutter_native_splash:
   web: false
 
   color: "#d4e4ed"
-  image: assets/splash_screen_4.png
-  android_gravity: fill
-  ios_content_mode: scaleAspectFill
+  image: assets/logo.png
+  android_gravity: center
+  ios_content_mode: centerInside
 
   android_12:
     color: "#d4e4ed"
-    image: assets/splash_screen_4.png
-    android_gravity: fill
+    icon_background_color: "#d4e4ed"
+    android_gravity: center
 
 # To reset configuration cleanly:
 # flutter clean
